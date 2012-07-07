@@ -129,16 +129,11 @@ int main(int argc, char **argv) {
 		exit(0);
 	}
 
-	while (1) {
-		res = usb_control_msg(handle, USB_TYPE_CLASS | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
-				0x01, 3 << 8 | 1, 0, (char*)&illumination, sizeof(illumination), 5000);
+	res = usb_control_msg(handle, USB_TYPE_CLASS | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
+			0x01, 3 << 8 | 1, 0, (char*)&illumination, sizeof(illumination), 5000);
 
-		if (res < 0) {
-			exit(1);
-		}
+	if (res = sizeof(illumination))
 		printf("%i\n", illumination);
-		usleep(100000);
-	}
 
 	usb_release_interface(handle, 0);
 
