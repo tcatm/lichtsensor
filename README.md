@@ -50,6 +50,10 @@ take a look at the [libusb FAQ](http://www.libusb.org/wiki/FAQ#CanIrunLinuxlibus
 
 ![Schematic of Lichtsensor](raw/master/schematic.png)
 
+# Pictures
+
+http://imgur.com/a/VfXc4
+
 # Further research
 
 The sensor's readings are likely to drift over time as there is no compensation
