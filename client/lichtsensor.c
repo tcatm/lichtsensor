@@ -133,7 +133,7 @@ int main(int argc, char **argv) {
 			0x01, 3 << 8 | 1, 0, (char*)&illumination, sizeof(illumination), 5000);
 
 	if (res = sizeof(illumination))
-		printf("%i\n", illumination);
+		printf("%u\n", illumination);
 
 	usb_release_interface(handle, 0);
 
