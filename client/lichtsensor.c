@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <getopt.h>
+#include <stdbool.h>
+#include <stdint.h>
 
 /* this is libusb, see http://libusb.sourceforge.net/ */
 #include <usb.h>
@@ -102,11 +105,33 @@ static usb_dev_handle * usbOpenDevice(int vendor, char *vendorName, int product,
 	return NULL;
 }
 
+void usage(char *cmdname) {
+  printf("Usage: %s [-l] [-h]\n", cmdname);
+}
+
+void help(char *cmdname) {
+  usage(cmdname);
+  puts("\t-l\tread sensor value in a loop (1s delay)");
+  puts("\t-h\tdisplay this short help and exit");
+}
+
 int main(int argc, char **argv) {
 	usb_dev_handle *handle = NULL;
 	int nBytes = 0;
 	int res;
 	uint32_t illumination;
+  char c;
+	bool loop = false;
+
+  while ((c = getopt(argc, argv, "lh")) != -1)
+		 switch (c) {
+      case 'l':
+				loop = true;
+				break;
+      case 'h':
+        help(argv[0]);
+        return 0;
+    }
 
 	handle = usbOpenDevice(0x16C0, "MetaMeute", 0x03EB, "Lichtsensor");
 
@@ -129,11 +154,22 @@ int main(int argc, char **argv) {
 		exit(0);
 	}
 
-	res = usb_control_msg(handle, USB_TYPE_CLASS | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
-			0x01, 3 << 8 | 1, 0, (char*)&illumination, sizeof(illumination), 5000);
+	do {
+		res = usb_control_msg(handle, USB_TYPE_CLASS | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
+				0x01, 3 << 8 | 1, 0, (char*)&illumination, sizeof(illumination), 5000);
 
-	if (res = sizeof(illumination))
-		printf("%u\n", illumination);
+		if (res < 0) {
+			fprintf(stderr, "Error!\n");
+			break;
+		}
+
+		if (res == sizeof(illumination))
+			printf("%u\n", illumination);
+
+		if (loop)
+			sleep(1);
+
+	} while (loop);
 
 	usb_release_interface(handle, 0);
 
