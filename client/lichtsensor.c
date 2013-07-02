@@ -163,8 +163,10 @@ int main(int argc, char **argv) {
 			break;
 		}
 
-		if (res == sizeof(illumination))
+		if (res == sizeof(illumination)) {
 			printf("%u\n", illumination);
+			fflush(stdout);
+		}
 
 		if (loop)
 			sleep(1);
